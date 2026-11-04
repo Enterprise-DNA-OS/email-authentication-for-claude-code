@@ -6,17 +6,21 @@
   "license": "MIT",
   "author": "Enterprise DNA (https://www.enterprisedna.co)",
   "repository": "github:Enterprise-DNA-OS/email-authentication-for-claude-code",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "migrate": "node scripts/migrate.mjs",
     "seed": "node scripts/seed.mjs",
     "demo": "node scripts/migrate.mjs && node scripts/seed.mjs",
     "view": "node scripts/view.mjs",
     "docs": "node scripts/docs.mjs",
-    "test": "node scripts/smoke.mjs"
+    "test": "node scripts/smoke.mjs",
+    "auth": "node scripts/auth.mjs"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.8",
+    "fast-xml-parser": "^5.12.0",
     "pg": "^8.23.0"
   }
 }

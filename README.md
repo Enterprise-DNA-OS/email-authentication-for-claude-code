@@ -1,115 +1,117 @@
-<h1 align="center">Email Authentication for Claude Code</h1>
+# Email Authentication for Claude Code
 
-<p align="center">
-  <strong>The open-source email authentication desk that is just a database and Claude Code.</strong>
-</p>
+Own the email authentication desk: domain history, receiver reports, sender reviews and investigation records in one database.
 
-<p align="center">
-  Created by <a href="https://www.enterprisedna.co"><strong>Enterprise DNA</strong></a>. Free and open source. Works with Claude Code, Codex, OpenCode or Cursor.
-</p>
+## Three ways to own it
 
-<!-- three-doors -->
-<table align="center">
-  <tr>
-    <td align="center"><strong>Do it yourself</strong><br/>Clone it, run it, own it. Free, MIT.<br/><a href="#quick-start">Quick start</a></td>
-    <td align="center"><strong>We customise it</strong><br/>Your fields, your rules, your DMARC.global data brought across.<br/><a href="https://enterprisedna.co/omni/book/?utm_source=github&utm_medium=readme&utm_campaign=dmarc-global">Book a call</a></td>
-    <td align="center"><strong>We run it for you</strong><br/>Installed, connected and operated inside Omni. Setup fee, then a retainer.<br/><a href="https://enterprisedna.co/omni/instead-of/dmarc-global?utm_source=github&utm_medium=readme&utm_campaign=dmarc-global">How it works</a></td>
-  </tr>
-</table>
+- **Do it yourself:** install this MIT-licensed base with Claude Code, Codex, OpenCode or Cursor. Your hosting and agent subscription are separate costs.
+- **We customise it:** Enterprise DNA maps your available DMARC.global history, sets your review rules and fields, and builds the connections, web front end or different stack you need. One setup fee, then a retainer for ongoing work.
+- **We run it for you:** Omni by Enterprise DNA installs and maintains your version, with access, backups and recurring reviews arranged. One setup fee, then a retainer.
 
-<p align="center">
-  <a href="#what-is-this">What is this</a> &bull;
-  <a href="#why-no-front-end">Why no front end</a> &bull;
-  <a href="#quick-start">Quick start</a> &bull;
-  <a href="#the-commands">Commands</a> &bull;
-  <a href="#instead-of-dmarc-global">Instead of DMARC.global</a> &bull;
-  <a href="#want-it-installed-and-run-for-you">Installed for you</a> &bull;
-  <a href="#license">License</a>
-</p>
+[Book a 30-minute call with Sam](https://enterprisedna.co/omni/book/?offer=replace-software&utm_source=github&utm_medium=readme&utm_campaign=dmarc-global).
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Node-20+-339933?style=flat-square" alt="Node 20+" />
-  <img src="https://img.shields.io/badge/PostgreSQL-any-336791?style=flat-square" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/PGlite-embedded-3ecf8e?style=flat-square" alt="PGlite" />
-  <img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square" alt="MIT License" />
-</p>
+## Run the synthetic demo
 
----
+Node 20 or newer. No cloud database is needed.
 
-## What is this
-
-Email Authentication for Claude Code does the job you pay DMARC.global for, as a Postgres database and a set of agent commands. There is no web front end. You open the folder in [Claude Code](https://claude.com/claude-code) (or Codex, OpenCode, Cursor: see `AGENTS.md`) and ask for what you want in plain language. It runs the right query, and it can answer questions the DMARC.global dashboard cannot.
-
-<!-- TODO(author): the annual bill. One sentence: what a 10 to 50 person business typically pays DMARC.global per year, all in, with a source. -->
-
-Want the same thing with a web front end, or built on a different stack? That is a customisation, and it is exactly what Enterprise DNA does: [book a call](https://enterprisedna.co/omni/book/?utm_source=github&utm_medium=readme&utm_campaign=dmarc-global).
-
-<!-- TODO(author): two or three sentences on what this specific product covers and who it is for. -->
-
-## Why no front end
-
-- The front end was only ever there because the database was hard to talk to. That is no longer true.
-- Your data sits in plain Postgres tables you own. Any tool can read them. No export, no lock-in.
-- No seats, no tiers, no add-ons. Read [docs/why-no-front-end.md](docs/why-no-front-end.md) for the honest trade-offs too.
-
-## Quick start
-
-Sixty seconds, no database install (an embedded Postgres runs inside Node):
-
-```bash
-git clone https://github.com/Enterprise-DNA-OS/email-authentication-for-claude-code.git
-cd email-authentication-for-claude-code
+```sh
 npm install
+npm test
 npm run demo
+npm run auth -- unknown-senders
+npm run auth -- summary --json
+npm run view
+npm run docs
 ```
 
-Then open the folder in Claude Code and type a slash command. <!-- TODO(author): name the first command to try. -->
+The demo includes an unknown source failing both aligned checks, a quiet approved service, missing reports, expired reviews and overdue investigation work. Repeated seeding preserves existing records. Use a fresh DATA_DIR for production, migrate it, and never seed it. Set DATABASE_URL for PostgreSQL. Embedded PGlite supports one process at a time.
 
-### Use it with your own Postgres or Supabase
+## What it does
 
-Copy `.env.example` to `.env`, set `DATABASE_URL`, then `npm run migrate`. Same commands, shared data, no per-seat fee.
+Seven domain record types and four database views support the weekly review. Standard aggregate XML reports map receiver observations to registered domains and source IPs. SPF and DKIM are the receiver's aligned results. A failure requires both to fail. Sender approval is a separate operator decision. Receiver disposition, metadata, original XML and unmodelled record fields remain available.
 
-## The commands
+Imports are transactional. Duplicate identical reports are harmless. Changed content with the same identity and overlapping intervals from the same receiver are rejected for reconciliation. Only registered policy domains are accepted. There is a 5 MiB compressed and expanded input limit and a 20,000-record limit. XML and gzip are supported.
 
-<!-- TODO(author): a table of the slash commands in .claude/commands and what each one does. -->
+This is the internal review workflow, not a full replacement for DMARC.global's hosted services. It has no email receiver, automatic mailbox download, DNS publishing, hosted SPF, sign-in service, sender intelligence feed or real-time alerts. Collection and DNS hosting must be arranged separately before switching. A pass never guarantees inbox delivery.
 
-| Command | What it does |
+## Recurring jobs
+
+| Command | Usage |
 |---|---|
-| `/...` | ... |
+| /domains | `domains` |
+| /reports | `reports` |
+| /sources | `sources` |
+| /failures | `failures` |
+| /unknown-senders | `unknown-senders` |
+| /quiet-senders | `quiet-senders` |
+| /coverage | `coverage` |
+| /policy-review | `policy-review` |
+| /investigations | `investigations` |
+| /overdue | `overdue` |
+| /compliance | `compliance` |
+| /activity | `activity` |
+| /summary | `summary` |
+| /domain | `domain <name-or-id-prefix>` |
+| /report | `report <id-prefix-or-report-key>` |
+| /add-domain | `add-domain <domain> --owner=NAME --purpose=TEXT --review-by=YYYY-MM-DD --actor=NAME` |
+| /review-domain | `review-domain <domain> --owner=NAME --purpose=TEXT --review-by=YYYY-MM-DD --actor=NAME` |
+| /review-sender | `review-sender <domain> <ip> --service=NAME --decision=approved|blocked|unknown --evidence=TEXT --review-by=YYYY-MM-DD --actor=NAME` |
+| /record-policy | `record-policy <domain> --policy=none|quarantine|reject --observed-at=ISO --evidence=TEXT --actor=NAME` |
+| /log-investigation | `log-investigation <domain> --code=CODE --title=TEXT --owner=NAME --due=YYYY-MM-DD --evidence=TEXT --actor=NAME` |
+| /close-investigation | `close-investigation <code-or-id-prefix> --outcome=TEXT --actor=NAME` |
+| /import | `import dmarc-global <saved.xml|saved.xml.gz> --actor=NAME [--dry-run]` |
+| /export | `export --out=NEW-FILE.json` |
+| /draft-domain | `draft-domain <domain> --actor=NAME` |
+| /draft-policy | `draft-policy <domain> --policy=none|quarantine|reject --rationale=TEXT --actor=NAME` |
+| /weekly-review | `weekly-review --actor=NAME` |
+| /help | `help` |
+| /customise | Add a field, rename a label or change a rule with a tested migration. |
+| /new-view | Add a read-only branded report. |
 
-## Instead of DMARC.global
+27 CLI commands and 29 slash-command recipes. All CLI commands support --json.
 
-<!-- TODO(author): how to bring data across from DMARC.global; link docs/replace-dmarc-global.md -->
+## Ten questions your records answer
 
-## Architecture
+1. Which domains have received no reports or only old reports? (`coverage`)
+2. Which unknown sources account for authentication failures? (`unknown-senders`)
+3. Which approved sending sources still fail both aligned checks? (`failures`)
+4. Which approved services have been quiet for over a month? (`quiet-senders`)
+5. Which investigations are overdue and who owns them? (`overdue`)
+6. Which domains lack a recorded collection purpose? (`compliance`)
+7. Which domain retention reviews are due? (`compliance`)
+8. Which sender reviews have expired? (`compliance`)
+9. Which domains combine failed messages, unreviewed sources and open cases? (`summary`)
+10. What did a receiver actually report before we opened a case? (`report demo-harbour`)
 
-```
-email-authentication-for-claude-code/
-  CLAUDE.md                 how the operator wants this run (routing table + house rules)
-  AGENTS.md                 the same, for Codex / OpenCode / Cursor / Gemini CLI
-  .claude/commands/         the slash commands
-  scripts/                  the CLI the commands drive
-  scripts/lib/db.mjs        one adapter: DATABASE_URL (pg) or embedded PGlite
-  supabase/migrations/      plain SQL schema
-  supabase/seed.sql         demo data
-  docs/                     the thesis and the migration guide
-```
+These are implemented queries, not a claim about what a vendor can never answer. Change the rules and joins when your business needs a different answer.
 
-## Built for coding agents
+## Your first hour: ten things to ask for
 
-The database, CLI and command recipes work with Claude Code, Codex, OpenCode or Cursor. Ask your coding agent for a new command and have it implement and test the change against the same records.
+1. Put our business name, colours and logo in brand.json.
+2. Show domains whose reports have gone quiet.
+3. Show unidentified sources that fail authentication.
+4. List approved services with recent failures.
+5. Show the overdue investigation queue.
+6. Draft our weekly review.
+7. Test one retained report and reconcile its counts.
+8. Record a sender review with evidence and its next review date.
+9. Add our service-owner field with a tested migration.
+10. Export a private snapshot before changing a rule.
 
-## Contributing
+## Switch and operate
 
-Issues and pull requests are welcome. Keep the shape: plain SQL, a small CLI, a slash command per recurring job, no front end.
+[The replace guide](docs/replace-dmarc-global.md) describes a one-command import per retained receiver XML report. Native DMARC.global history export was not verified. Do not assume the vendor can supply all historical XML. A CSV export requires its own tested mapping. The fixture is synthetic, not a vendor-provided sample.
 
-## Want it installed and run for you?
+Edit brand.json, then render the week, sender review and investigation dashboards with npm run view. npm run docs produces domain review packs and investigation records. Draft commands prepare the weekly review, one domain review and a policy-change review with its evidence snapshot. Nothing sends, changes DNS or approves a change. Read [why no front end](docs/why-no-front-end.md).
 
-Enterprise DNA installs Email Authentication for Claude Code for your business, migrates your DMARC.global data, connects it to the rest of your tools, and runs it for you as part of **Omni**, our managed Command Center. One setup fee, then a monthly retainer.
+[Compliance](docs/compliance.md) cites current IETF rules and NZ privacy principles. Review dates and stale-report thresholds are local policies. Privacy and host controls need configuration for your business. [Research](docs/research.md) records pricing, scores and the limits of buyer evidence.
 
-- Book a call: [enterprisedna.co/omni/book](https://enterprisedna.co/omni/book/?offer=replace-software&utm_source=github&utm_medium=readme&utm_campaign=dmarc-global)
-- Read more: [enterprisedna.co/omni/instead-of/dmarc-global](https://enterprisedna.co/omni/instead-of/dmarc-global?utm_source=github&utm_medium=readme&utm_campaign=dmarc-global)
+## Validation and storage
 
-## License
+npm test creates a temporary database, exercises all commands, checks malformed and hostile XML, duplicate and overlapping reports, transaction rollback, aligned authentication logic, escaped HTML and snapshot completeness. CI runs Windows and Ubuntu with Node 20 and 22, plus PostgreSQL 16. A configured workflow is not evidence that it passed; inspect its run.
 
-MIT. Copyright (c) 2026 Enterprise DNA.
+Tables enable row-level security and remove PUBLIC privileges. This is a trusted-operator tool with no multi-tenant access layer. Use one database per customer. Actor names are labels, not authenticated identities. The database owner can bypass controls. Back up the database and protect generated files and exports. JSON snapshots contain the entire domain history and raw reports but automatic snapshot restore is not supplied. Native database backups remain necessary.
+
+## Licence
+
+MIT. Copyright 2026 Enterprise DNA. DMARC.global belongs to its owner. No vendor code, assets or licensed intelligence are included.

@@ -1,24 +1,9 @@
-# Why there is no front end
+# A report desk without a front end
 
-DMARC.global is a database with a subscription. The tables underneath it are ordinary: a few entities, a few relationships, a handful of workflows you repeat every week. What you pay for is the layer on top that lets people who do not write SQL get at those tables. Screens, filters, dashboards, forms.
+The useful work is recurring: read report coverage, identify unknown sources, review failures, assign investigations and prepare a weekly domain review. The CLI queries the same records each time. Claude Code, Codex, OpenCode or Cursor turns an operator's question into that command.
 
-That layer used to be the whole product, because talking to a database was hard. It is not hard any more. Open this folder in Claude Code, describe what you want, and it writes the query, runs it, and explains the answer. Ask a question the dashboard never had a chart for and you still get an answer.
+Read-only branded HTML shows the week, source reviews and investigations. Documents show each domain and each investigation. They contain no action buttons and do not send anything.
 
-## What you gain
+A screen offers mobile navigation, shared live editing, visual sorting and a sign-in boundary. This base has none of those, nor a background report collector. The embedded database needs one process at a time. PostgreSQL supports concurrent connections, but the tool still assumes trusted operators, with no application access roles. Use separate databases per customer. Enterprise DNA can build the front end and connections your team needs.
 
-- **Better answers.** A dashboard shows what the vendor decided to chart. Here you ask your own question, in your own words, and get it answered against your own data.
-- **No seats.** Everyone who needs to look can look. The bill does not grow with headcount.
-- **Your data in your Postgres.** Plain tables. Back them up, query them from anything, leave any time. There is no export step because there is nothing to leave.
-- **A process that matches you.** When your way of working changes, you add a command. You do not wait for a feature request to clear.
-
-## What you give up
-
-- **A visual board.** Stages are a table you ask about, not cards you drag.
-- **A phone app.** It runs where Claude Code runs.
-- **A vendor help desk.** This is open source. Enterprise DNA supports the installed version for businesses that want someone to call.
-
-## Who this fits
-
-Small teams who already use Claude Code, or who would rather learn to ask than learn another interface. If your team needs a screen to look at all day, keep DMARC.global. If you need the answers more than the screens, this is cheaper, faster and yours.
-
-Installed and run for you: https://enterprisedna.co/omni/instead-of/dmarc-global
+Reports are private files. Generated documents can be printed to PDF, but review the intended recipients before sharing. Poppins is loaded from Google Fonts when online, with a system-font fallback offline. Business colours and logo are configured in brand.json. The database and CLI do not need network access after package installation.

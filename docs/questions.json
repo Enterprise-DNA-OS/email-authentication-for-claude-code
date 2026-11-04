@@ -1,0 +1,42 @@
+[
+  [
+    "Which domains have received no reports or only old reports?",
+    "coverage"
+  ],
+  [
+    "Which unknown sources account for authentication failures?",
+    "unknown-senders"
+  ],
+  [
+    "Which approved sending sources still fail both aligned checks?",
+    "failures"
+  ],
+  [
+    "Which approved services have been quiet for over a month?",
+    "quiet-senders"
+  ],
+  [
+    "Which investigations are overdue and who owns them?",
+    "overdue"
+  ],
+  [
+    "Which domains lack a recorded collection purpose?",
+    "compliance"
+  ],
+  [
+    "Which domain retention reviews are due?",
+    "compliance"
+  ],
+  [
+    "Which sender reviews have expired?",
+    "compliance"
+  ],
+  [
+    "Which domains combine failed messages, unreviewed sources and open cases?",
+    "summary"
+  ],
+  [
+    "What did a receiver actually report before we opened a case?",
+    "report demo-harbour"
+  ]
+]

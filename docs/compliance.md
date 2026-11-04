@@ -1,0 +1,19 @@
+# Rules, evidence and limits
+
+Checked 4 November 2026. These checks support an operator's record review. They do not certify legal compliance, authenticate the source of an uploaded report, enforce mail policy, or prove inbox delivery.
+
+| Rule | Implementation | Source and limit |
+|---|---|---|
+| DMARC passes when at least one aligned authentication route passes | Failures require both policy_evaluated.spf and policy_evaluated.dkim to be fail. Raw auth_results are preserved but never substituted for alignment. | [RFC 9989](https://www.rfc-editor.org/rfc/rfc9989.html), sections 4.1 and 4.4. The receiver computed alignment. This tool does not recheck signatures or DNS. |
+| Aggregate reports describe a reporting interval and observed source addresses | Import validates dates, positive counts, IP addresses, policy and required identifiers. Legacy none and current pass dispositions are accepted. | [RFC 9990](https://www.rfc-editor.org/rfc/rfc9990.html), section 3 and Appendix A. Validation covers the supported subset, not every optional extension or full XSD conformance. |
+| Duplicate observations can distort the total | Same identity and identical XML is a no-op. Changed content with the same identity is rejected. Overlapping intervals from the same reporter and domain are rejected for manual reconciliation. | RFC 9990 section 3.5.4 permits a receiver to decide how duplicates are handled. Different report identifiers do not prove non-overlap. |
+| Untrusted reports can be hostile or false | DTDs and entity declarations are rejected. XML and decompressed payloads are capped at 5 MiB. The source file and original records are retained. | RFC 9990 sections 8.1 and 8.2. File validation does not prove sender authenticity. Import only from an authorised reporting mailbox or verified archive. |
+| Collection needs a necessary, lawful purpose | Domain registration requires a purpose. Compliance lists missing purpose records. | [NZ Privacy Principle 1](https://www.privacy.org.nz/privacy-principles/1/). A nonempty field cannot prove the stated purpose is lawful. |
+| Retention follows the purpose, not indefinite storage | Domains have a next retention-review date. Compliance lists overdue or absent reviews. No automatic deletion is supplied. | [NZ Privacy Principle 9](https://www.privacy.org.nz/privacy-principles/9/). The operator sets retention and approves disposal across reports, exports and backups. |
+| Protect report information and control disclosure | Domain tables enable row-level security with PUBLIC privileges removed. Files use private modes where the OS supports them. No public server or send function exists. | [NZ Privacy Principle 5](https://www.privacy.org.nz/privacy-principles/5/) and [Principle 11](https://www.privacy.org.nz/privacy-principles/11/). Configure host access, backups and recipient checks separately. Windows ACLs need operator review. |
+
+The three-day missing-report threshold, thirty-day activity window and sender review dates are local operating rules, not IETF or legal deadlines. Partial reporting remains partial. A quiet approved sender is a review prompt, never proof that the sender is safe to remove.
+
+Policy reviews save the proposed handling, rationale and an evidence snapshot. They are drafts and never approval to publish a DNS change. A person must assess the intended domain, legitimate senders, forwarding and potential mail loss before approving a separate change. The CLI has no DNS publishing, SMTP, hosted SPF or automated policy enforcement.
+
+This is an owner-operated installation, not a sealed multi-tenant service. Use separate databases for separate customers. Actor and reviewer names are recorded labels, not authenticated identities. Database owners can edit records and bypass row-level security. Audit rows are an operational history, not a tamper-proof log. An Australian deployment needs its own applicability and privacy review.

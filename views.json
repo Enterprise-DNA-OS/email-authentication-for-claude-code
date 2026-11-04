@@ -2,12 +2,30 @@
   {
     "name": "week",
     "title": "This week",
-    "subtitle": "Email Authentication for Claude Code: what needs attention, rendered by npm run view",
     "sections": [
       {
-        "title": "Needs attention",
-        "note": "TODO(author): point this at the industry's attention view (overdue, stuck, quiet).",
-        "sql": "select 'replace me' as item, 'TODO(author)' as why"
+        "title": "This week",
+        "sql": "select * from domain_summary order by domain"
+      }
+    ]
+  },
+  {
+    "name": "senders",
+    "title": "Sender review",
+    "sections": [
+      {
+        "title": "Sender review",
+        "sql": "select domain,ip,service,decision,messages_30d,failures_30d,review_by from source_health order by domain,ip"
+      }
+    ]
+  },
+  {
+    "name": "investigations",
+    "title": "Investigation queue",
+    "sections": [
+      {
+        "title": "Investigation queue",
+        "sql": "select code,domain,title,owner,due,attention from investigation_queue where status='open' order by due"
       }
     ]
   }

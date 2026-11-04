@@ -1,11 +1,36 @@
 [
   {
-    "name": "example",
-    "title": "TODO(author): the first document this industry must produce",
-    "for_each": "select gen_random_uuid() as id, 'Example' as name",
+    "name": "domain-review",
+    "title": "Domain authentication review",
+    "for_each": "select id,name from domains order by name",
     "file": "name",
     "sections": [
-      { "title": "Details", "sql": "select 'replace me' as item, $1::text as record_id" }
+      {
+        "title": "Domain record",
+        "layout": "record",
+        "sql": "select name,owner,purpose,retention_review,policy,policy_observed_at,policy_evidence from domains where id=$1"
+      },
+      {
+        "title": "Sources",
+        "sql": "select domain,ip,service,decision,messages_30d,failures_30d,review_by from source_health where domain=(select name from domains where id=$1)"
+      },
+      {
+        "title": "Investigations",
+        "sql": "select code,title,owner,due,status,outcome from investigations where domain_id=$1"
+      }
+    ]
+  },
+  {
+    "name": "investigation-record",
+    "title": "Authentication investigation record",
+    "for_each": "select id,code from investigations order by code",
+    "file": "code",
+    "sections": [
+      {
+        "title": "Case",
+        "layout": "record",
+        "sql": "select code,title,owner,due,status,evidence,outcome,closed_at from investigations where id=$1"
+      }
     ]
   }
 ]
